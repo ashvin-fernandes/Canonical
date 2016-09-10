@@ -88,8 +88,7 @@ def equationToDict(equationInput):
 	dict ={}
 	for summand in equation:
 		
-		term = re.split(r'(^\d+(?:\.\d+)?)', summand, 1) #Splits the variable and the coefficient
-		print(term)
+		term = re.split('(^\d+(?:\.\d+)?)', summand, 1) #Splits the variable and the coefficient
 
 		if len(term) == 1:
 			if term[0] == "+":
@@ -102,21 +101,13 @@ def equationToDict(equationInput):
 					dict[term[0]] += 1.0 * sign
 				else:
 					dict[term[0]] = 1.0 * sign
+		else:		
+			coeff = float(term[1])
+			var = term[2]
+			if var in dict:
+				dict[var] += coeff * sign
 			else:
-				if "" in dict:
-					dict[""] += float(term[0]) * sign
-				else:
-					dict[""] = float(term[0]) * sign
-			sign = 1
-			continue
-
-			
-		coeff = float(term[1])
-		var = term[2]
-		if var in dict:
-			dict[var] += coeff * sign
-		else:
-			dict[var] = coeff * sign
+				dict[var] = coeff * sign
 			
 		sign = 1
 		

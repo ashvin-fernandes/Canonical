@@ -1,4 +1,5 @@
-#Ashvin Fernandes
+#Ashvin Fernandes, June 2nd 2016
+import unittest
 import canonical
 
 class CanonicalTest(unittest.TestCase):
