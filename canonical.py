@@ -1,8 +1,57 @@
-#Ashvin Fernandes, June 2nd 2016
+#Ashvin Fernandes,
 import re
 
+def main():
+	choice = -1
+	while choice != "1" and choice != "2":
+		choice = input("Enter 1 for input mode, 2 for for file mode: ")
+		try:
+			if int(choice) == 1:
+				mode = 1
+				inputMode()
+			elif int(choice) == 2:
+				mode = 2
+				fileMode()
+			else:
+				print("Invalid selection")
+		except ValueError:
+			print("Invalid selection")
+			
+def inputMode():
+	"""Prompt user for equation, and print that equation in canonical form"""
+	while 1:
+		equationInput = input("Enter equation: ")
+		print(convertToCanon(equationInput))
+		
+def fileMode():
+	"""Prompt user for file containing equations. Create a file with those equations in canonical form"""
+	filepath = input("Please enter filepath: ")
+	inputFile = open(filepath)
+	outputFile = open("output.out", "w")
+
+	for line in inputFile:
+		line = line.rstrip("\n")
+		outputFile.write(convertToCanon(line) + "\n")
+	
+	print("complete")	
+	inputFile.close()
+	outputFile.close()
+	
+def convertToCanon(input):
+	"""Takes a string representing an equation and returns a string with that equation in canonical form."""
+	
+	sides = input.split(" = ")
+	LS = sides[0]
+	RS = sides[1]
+	LS = convertBrackets(LS)
+	RS = convertBrackets(RS)
+	canon = mergeCanonDict(equationToDict(LS), equationToDict(RS))
+	return canonToString(canon)
+	
+
 def convertBrackets(equation):
-	"""Takes a string representing one side of an equation and returns a string with all brackets removed."""
+	"""Takes a string representing one side of an equation and recursively goes through it until no brackets are left. """
+	
 	leftmost = equation.find("(")
 	if leftmost == -1:
 		return equation
@@ -15,29 +64,32 @@ def convertBrackets(equation):
 			bracketcount += 1
 		elif equation[x] == ")":
 			bracketcount -= 1
+			
+	rightmost = x
 		   
-	if (leftmost == 0) or (equation[leftmost - 2] == "+"):
-		retEquation = equation[:leftmost] + equation[leftmost+1:x] + equation[x+1:len(equation) + 1]	
+	if (leftmost == 0) or (equation[leftmost - 2] == "+"): #If the brackets are positive we can simply remove the brackets, otherwise we need to flip the signs inside.
+		retEquation = equation[:leftmost] + equation[leftmost+1:rightmost] + equation[rightmost+1:len(equation) + 1]	
 	else:
-		replacement = equation[leftmost+1:x]
+		replacement = equation[leftmost+1:rightmost]
 		replacement = replacement.replace("-", "!")
 		replacement = replacement.replace("+", "-")
 		replacement = replacement.replace("!", "+")
-		retEquation = equation[:leftmost] + replacement + equation[x+1:len(equation) + 1]
+		retEquation = equation[:leftmost] + replacement + equation[rightmost+1:len(equation) + 1]
 		
-	return convertBrackets(retEquation)
-
+	return convertBrackets(retEquation) 
+	
 def equationToDict(equationInput):
 	"""Takes a string representing one side of an equation. 
 	Returns a dictionary with the variables of the equation as keys and the coefficients as values. 
-	Numbers without variables are keyed to ""  """
+	Coefficients without variables are keyed to ""  """
 	
 	equation = equationInput.split(" ")
 	sign = 1
 	dict ={}
 	for summand in equation:
 		
-		term = re.split(r'(^\d+(?:\.\d+)?)', summand, 1)
+		term = re.split(r'(^\d+(?:\.\d+)?)', summand, 1) #Splits the variable and the coefficient
+		print(term)
 
 		if len(term) == 1:
 			if term[0] == "+":
@@ -111,18 +163,6 @@ def canonToString(canon):
 	
 	return retString
 	
-	
-def convertToCanon(input):
-	"""Takes a string representing an equation and returns a string with that equation in canonical form."""
-	
-	sides = input.split(" = ")
-	LS = sides[0]
-	RS = sides[1]
-	LS = convertBrackets(LS)
-	RS = convertBrackets(RS)
-	canon = mergeCanonDict(equationToDict(LS), equationToDict(RS))
-	return canonToString(canon)
-	
 def sortCanon(varList):
 	"""Takes a list of keys representing variables and returns them in a sorted list.
 	Variables with the highest power are given priority, and variables with equal power are sorted alphabetically"""
@@ -149,42 +189,6 @@ def sortCanon(varList):
 		
 	leftovers = list(set(varList) - set(retList)) 
 	return  sorted(retList) + sortCanon(leftovers)
-
 	
-def inputMode():
-	"""Prompt user for equation, and print that equation in canonical form"""
-	while 1:
-		equationInput = input("Enter equation: ")
-		print(convertToCanon(equationInput))
-		
-def fileMode():
-	"""Prompt user for file containing equations. Create a file with those equations in canonical form"""
-	filepath = input("Please enter filepath: ")
-	inputFile = open(filepath)
-	outputFile = open("output.out", "w")
-
-	for line in inputFile:
-		line = line.rstrip("\n")
-		outputFile.write(convertToCanon(line) + "\n")
-	
-	print("complete")	
-	inputFile.close()
-	outputFile.close()
-
-
 if __name__ == "__main__":
-	
-	choice = -1
-	while choice != "1" and choice != "2":
-		choice = input("Enter 1 for input mode, 2 for for file mode: ")
-		try:
-			if int(choice) == 1:
-				mode = 1
-				inputMode()
-			elif int(choice) == 2:
-				mode = 2
-				fileMode()
-			else:
-				print("Invalid selection")
-		except ValueError:
-			print("Invalid selection")
+	main()

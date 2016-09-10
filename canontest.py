@@ -1,5 +1,4 @@
-#Ashvin Fernandes, June 2nd 2016
-import unittest
+#Ashvin Fernandes
 import canonical
 
 class CanonicalTest(unittest.TestCase):
@@ -20,7 +19,10 @@ class CanonicalTest(unittest.TestCase):
 		self.assertEqual(canonical.convertToCanon("2.0x^2 - 2.0x^2 + 2.2y = 3.0"), "2.2y - 3.0 = 0")
 		self.assertEqual(canonical.convertToCanon("2.5xy^2 + y^2 - x + 3 = 7.2xy^2 - 2.4y^2 + 3.0y"), " - 4.7xy^2 + 3.4y^2 - x - 3.0y + 3.0 = 0")
 		self.assertEqual(canonical.convertToCanon("2.5xy^2 + (y^2 - (x + 3)) = 7.2xy^2 - (2.4y^2 + 3.0y)"), " - 4.7xy^2 + 3.4y^2 - x + 3.0y - 3.0 = 0")
+		self.assertEqual(canonical.convertToCanon("(2.0x - 1) + (3.0y + 1) = 2"), "2.0x + 3.0y - 2.0 = 0")
 		self.assertEqual(canonical.convertToCanon("2.0x = 2.0x"), "0 = 0")
+		
 
 if __name__ == "__main__":
-	unittest.main()
+	unittest.main(exit=False)
+	input('Press ENTER to exit')
